@@ -1,16 +1,20 @@
-# Node Base Image
-FROM node:12.2.0-alpine
+# Use the smallest Node.js base image (Alpine version)
+FROM node:12-alpine
 
-#Working Directry
+# Set the working directory inside the container
 WORKDIR /node
 
-#Copy the Code
+# Copy only package.json and package-lock.json (for better build caching)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy the rest of the application code
 COPY . .
 
-#Install the dependecies
-RUN npm install
-RUN npm run test
+# Expose port 8000 to the host
 EXPOSE 8000
 
-#Run the code
-CMD ["node","app.js"]
+# Start the application
+CMD ["node", "app.js"]
